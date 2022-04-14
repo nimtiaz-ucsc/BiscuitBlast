@@ -4,6 +4,10 @@ class Menu extends Phaser.Scene {
     }
 
     preload() {
+        this.load.image('sky', 'assets/sky.png');
+
+        this.load.spritesheet('clouds', 'assets/clouds.png', {frameWidth: 640, frameHeight: 480, startFrame: 0, endFrame: 1});
+
         this.load.audio('sfx_select', 'assets/select.wav');
     }
     create() {
@@ -20,14 +24,26 @@ class Menu extends Phaser.Scene {
             fixedWidth: 0
         }
 
-    this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 'ROCKET PATROL', menuConfig).setOrigin(0.5);
-    this.add.text(game.config.width/2, game.config.height/2, 'Use ← → arrows to move & [F] to fire', menuConfig).setOrigin(0.5);
-    menuConfig.backgroundColor = "#00FF00";
-    menuConfig.color = "#008800";
-    this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Press ← for Novice or → for Expert', menuConfig).setOrigin(0.5);
+        this.anims.create({
+            key: 'float',
+            frames: this.anims.generateFrameNumbers('clouds', {start: 0, end: 1, first: 0}),
+            frameRate: 5,
+            repeat: -1
+        });
 
-    keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-    keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        this.menuSky = this.add.sprite(0, 0, 'sky').setOrigin(0, 0);
+        this.menuClouds = this.add.sprite(0, 0, 'clouds').setOrigin(0, 0).play('float');
+        
+
+        this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 'ROCKET PATROL', menuConfig).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2, 'Use ← → arrows to move & [F] to fire', menuConfig).setOrigin(0.5);
+        menuConfig.backgroundColor = "#00FF00";
+        menuConfig.color = "#008800";
+        this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Press ← for Novice or → for Expert', menuConfig).setOrigin(0.5);
+
+        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+    
     }
 
     update() {
