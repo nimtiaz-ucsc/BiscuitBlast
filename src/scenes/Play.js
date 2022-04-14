@@ -6,9 +6,9 @@ class Play extends Phaser.Scene {
     preload() {
         this.load.image('starfield', 'assets/starfield.png');
         this.load.image('rocket', 'assets/rocket.png');
-        this.load.image('ship', 'assets/spaceship.png');
         
         this.load.spritesheet('explosion', 'assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+        this.load.spritesheet('cookie', 'assets/cookie.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 1});
 
         this.load.audio('sfx_select', 'assets/select.wav');
         this.load.audio('sfx_explosion', 'assets/explosion.wav');
@@ -21,14 +21,33 @@ class Play extends Phaser.Scene {
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        
+        this.anims.create({
+            key: 'explode',
+            frames: this.anims.generateFrameNumbers('explosion', {start: 0, end: 9, first: 0}),
+            frameRate: 30
+        });
+        
+        let crumbsAnim = this.anims.create({
+            key: 'crumbs',
+            frames: this.anims.generateFrameNumbers('cookie', {start: 0, end: 1, first: 0}),
+            frameRate: 5,
+            repeat: -1
+        });
 
         this.starfield = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'starfield').setOrigin(0, 0);
 
         this.p1Rocket = new Rocket(this, game.config.width/2, 431, 'rocket').setOrigin(0.5, 0);
 
-        this.shipA = new Ship(this, game.config.width + borderUISize*6, borderUISize*4, 'ship', 0, 30).setOrigin(0, 0);
-        this.shipB = new Ship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'ship', 0, 20).setOrigin(0,0);
-        this.shipC = new Ship(this, game.config.width, borderUISize*6 + borderPadding*4, 'ship', 0, 10).setOrigin(0,0);
+        this.shipA = new Ship(this, game.config.width + borderUISize*6, borderUISize*4, 'cookie', 0, 30).setOrigin(0, 0);
+        this.shipB = new Ship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'cookie', 0, 20).setOrigin(0,0);
+        this.shipC = new Ship(this, game.config.width, borderUISize*6 + borderPadding*4, 'cookie', 0, 10).setOrigin(0,0);
+
+        this.shipA.anims.play('crumbs');
+        crumbsAnim.frameRate = 4;
+        this.shipB.anims.play('crumbs');
+        crumbsAnim.frameRate = 6;
+        this.shipC.anims.play('crumbs');
 
         this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize*2, 0x00FF00).setOrigin(0, 0);
 
@@ -38,12 +57,7 @@ class Play extends Phaser.Scene {
         this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xB2B1B2).setOrigin(0, 0);
         
         this.circleLight = this.add.arc(game.config.width - borderUISize*2, game.config.height - borderUISize/2, borderPadding/2, 0, 360, false, 0x008800).setOrigin(0.5);
-        
-        this.anims.create({
-            key: 'explode',
-            frames: this.anims.generateFrameNumbers('explosion', {start: 0, end: 9, first: 0}),
-            frameRate: 30
-        });
+    
 
         this.p1Score = 0;
         let scoreConfig = {
