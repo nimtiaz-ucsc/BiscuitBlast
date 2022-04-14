@@ -4,11 +4,12 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('starfield', 'assets/starfield.png');
+        this.load.image('sky', 'assets/sky.png');
         this.load.image('rocket', 'assets/rocket.png');
         
         this.load.spritesheet('explosion', 'assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
         this.load.spritesheet('cookie', 'assets/cookie.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 1});
+        this.load.spritesheet('clouds', 'assets/clouds.png', {frameWidth: 640, frameHeight: 480, startFrame: 0, endFrame: 1});
 
         this.load.audio('sfx_select', 'assets/select.wav');
         this.load.audio('sfx_explosion', 'assets/explosion.wav');
@@ -35,7 +36,18 @@ class Play extends Phaser.Scene {
             repeat: -1
         });
 
-        this.starfield = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'starfield').setOrigin(0, 0);
+        this.anims.create({
+            key: 'float',
+            frames: this.anims.generateFrameNumbers('clouds', {start: 0, end: 1, first: 0}),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        this.sky = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sky').setOrigin(0, 0);
+        this.clouds = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'clouds').setOrigin(0, 0);
+
+        this.cloudSprite = this.add.sprite(this.sky.x, this.sky.y, 'clouds').setVisible(false).play('float');
+
 
         this.p1Rocket = new Rocket(this, game.config.width/2, 431, 'rocket').setOrigin(0.5, 0);
 
@@ -49,15 +61,12 @@ class Play extends Phaser.Scene {
         crumbsAnim.frameRate = 6;
         this.shipC.anims.play('crumbs');
 
-        this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize*2, 0x00FF00).setOrigin(0, 0);
+        //this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize*2, 0x00FF00).setOrigin(0, 0);
 
-        this.add.rectangle(0, 0, game.config.width, borderUISize, 0xB2B1B2).setOrigin(0, 0);
-        this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xB2B1B2).setOrigin(0, 0);
-        this.add.rectangle(0, 0, borderUISize, game.config.height, 0xB2B1B2).setOrigin(0, 0);
-        this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xB2B1B2).setOrigin(0, 0);
-        
-        this.circleLight = this.add.arc(game.config.width - borderUISize*2, game.config.height - borderUISize/2, borderPadding/2, 0, 360, false, 0x008800).setOrigin(0.5);
-    
+        //this.add.rectangle(0, 0, game.config.width, borderUISize, 0xB2B1B2).setOrigin(0, 0);
+        //this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xB2B1B2).setOrigin(0, 0);
+        //this.add.rectangle(0, 0, borderUISize, game.config.height, 0xB2B1B2).setOrigin(0, 0);
+        //this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xB2B1B2).setOrigin(0, 0);    
 
         this.p1Score = 0;
         let scoreConfig = {
@@ -94,7 +103,8 @@ class Play extends Phaser.Scene {
             this.scene.start('menu');
         }
 
-        this.starfield.tilePositionX -= 4;
+        this.clouds.setFrame(this.cloudSprite.frame.name);
+        this.clouds.tilePositionX -= 1;
 
         if (!this.gameOver) {
             this.p1Rocket.update();
@@ -129,12 +139,10 @@ class Play extends Phaser.Scene {
         ship.alpha = 0;
         let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
         boom.anims.play('explode');
-        this.circleLight.fillColor = 0x00FF00;
         boom.on('animationcomplete', () => {
             ship.reset();
             ship.alpha = 1;
             boom.destroy();
-            this.circleLight.fillColor = 0x008800;
         });
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
