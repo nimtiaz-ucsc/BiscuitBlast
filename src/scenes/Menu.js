@@ -14,13 +14,15 @@ class Menu extends Phaser.Scene {
     create() {
         let menuConfig = {
             fontFamily: 'Cursive',
-            fontSize: '28px',
-            backgroundColor: '#F3B141',
-            color: '#843605',
-            align: 'right',
+            fontSize: '20px',
+            //backgroundColor: '#B55088',
+            color: '#FDE7FF',
+            align: 'left',
             padding: {
                 top: 5,
                 bottom: 5,
+                left: 5,
+                right: 5
             },
             fixedWidth: 0
         }
@@ -36,12 +38,12 @@ class Menu extends Phaser.Scene {
         this.add.sprite(0, 0, 'clouds').setOrigin(0, 0).play('float');
         this.add.sprite(0, 0, 'title').setOrigin(0, 0);
         
-
-        this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 'ROCKET PATROL', menuConfig).setOrigin(0.5);
-        this.add.text(game.config.width/2, game.config.height/2, 'Use ← → arrows to move & [F] to fire', menuConfig).setOrigin(0.5);
-        menuConfig.backgroundColor = "#00FF00";
-        menuConfig.color = "#008800";
-        this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Press ← for Novice or → for Expert', menuConfig).setOrigin(0.5);
+        this.add.text(2.05 * game.config.width/3, game.config.height/2, 'P1 CONTROLS:\nMove: [A], [D]\nFire: [W]', menuConfig).setOrigin(0);
+        this.add.text(2.05 * game.config.width/3, 3 * game.config.height/4, 'P2 CONTROLS:\nMove: [J], [L]\nFire: [I]', menuConfig).setOrigin(0);
+        menuConfig.backgroundColor = '#B55088';
+        menuConfig.align = 'center';
+        menuConfig.fontSize = '24px';
+        this.add.text(game.config.width/9, 1.75 * game.config.height/3 + borderUISize + borderPadding, 'PRESS\n[<-] for Novice\nOR\n[->] for Expert', menuConfig).setOrigin(0);
 
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);

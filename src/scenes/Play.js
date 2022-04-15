@@ -91,6 +91,8 @@ class Play extends Phaser.Scene {
             padding: {
                 top: 5,
                 bottom: 5,
+                left: 5,
+                right: 5
             },
             fixedWidth: 100
         }

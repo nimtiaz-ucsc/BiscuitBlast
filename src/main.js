@@ -8,6 +8,7 @@ Points breakdown:
 - Redesign the game's artwork, UI, and sound to change its theme/aesthetic (to something other than sci-fi) (60)
 - Implement a simultaneous two-player mode (30)
 - Allow the player to control the Rocket after it's fired (5)
+- ... (5)
 ***********************/
 
 let config = {
