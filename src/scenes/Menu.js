@@ -5,6 +5,7 @@ class Menu extends Phaser.Scene {
 
     preload() {
         this.load.image('sky', 'assets/sky.png');
+        this.load.image('title', 'assets/title.png');
 
         this.load.spritesheet('clouds', 'assets/clouds.png', {frameWidth: 640, frameHeight: 480, startFrame: 0, endFrame: 1});
 
@@ -12,7 +13,7 @@ class Menu extends Phaser.Scene {
     }
     create() {
         let menuConfig = {
-            fontFamily: 'Courier',
+            fontFamily: 'Cursive',
             fontSize: '28px',
             backgroundColor: '#F3B141',
             color: '#843605',
@@ -31,8 +32,9 @@ class Menu extends Phaser.Scene {
             repeat: -1
         });
 
-        this.menuSky = this.add.sprite(0, 0, 'sky').setOrigin(0, 0);
-        this.menuClouds = this.add.sprite(0, 0, 'clouds').setOrigin(0, 0).play('float');
+        this.add.sprite(0, 0, 'sky').setOrigin(0, 0);
+        this.add.sprite(0, 0, 'clouds').setOrigin(0, 0).play('float');
+        this.add.sprite(0, 0, 'title').setOrigin(0, 0);
         
 
         this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 'ROCKET PATROL', menuConfig).setOrigin(0.5);

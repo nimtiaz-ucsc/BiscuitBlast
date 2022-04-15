@@ -4,9 +4,9 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('sky', 'assets/sky.png');
-        this.load.image('rocket', 'assets/rocket.png');
+        this.load.image('sky', 'assets/sky.png'); 
         
+        this.load.spritesheet('monster', 'assets/monster.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 3});
         this.load.spritesheet('explosion', 'assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
         this.load.spritesheet('cookie', 'assets/cookie.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 1});
         this.load.spritesheet('clouds', 'assets/clouds.png', {frameWidth: 640, frameHeight: 480, startFrame: 0, endFrame: 1});
@@ -49,12 +49,19 @@ class Play extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'munch',
+            frames: this.anims.generateFrameNumbers('monster', {start: 0, end: 3, first: 0}),
+            frameRate: 10,
+            repeat: -1
+        });
+
         this.sky = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sky').setOrigin(0, 0);
         this.clouds = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'clouds').setOrigin(0, 0);
         this.cloudSprite = this.add.sprite(game.config.width, game.config.height, 'clouds').setVisible(false).play('float');
 
-        this.p1Rocket = new Rocket(this, game.config.width/3, 431, 'rocket', keyA, keyD, keyW).setOrigin(0.5, 0);
-        this.p2Rocket = new Rocket(this, 2 * game.config.width/3, 431, 'rocket', keyJ, keyL, keyI).setOrigin(0.5, 0);
+        this.p1Rocket = new Rocket(this, game.config.width/3, 431, 'monster', keyA, keyD, keyW).setOrigin(0.5, 0);
+        this.p2Rocket = new Rocket(this, 2 * game.config.width/3, 431, 'monster', keyJ, keyL, keyI).setOrigin(0.5, 0);
 
         this.shipA = new Ship(this, game.config.width + borderUISize*6, borderUISize*4, 'cookie', 0, 30).setOrigin(0, 0);
         this.shipB = new Ship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'cookie', 0, 20).setOrigin(0,0);
@@ -66,7 +73,7 @@ class Play extends Phaser.Scene {
         crumbsAnim.frameRate = 6;
         this.shipC.anims.play('crumbs');
 
-        //this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize*2, 0x00FF00).setOrigin(0, 0);
+        this.add.rectangle(10, borderUISize + borderPadding, game.config.width - 20, borderUISize*2, 0x68386C).setOrigin(0, 0);
 
         //this.add.rectangle(0, 0, game.config.width, borderUISize, 0xB2B1B2).setOrigin(0, 0);
         //this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xB2B1B2).setOrigin(0, 0);
@@ -76,7 +83,7 @@ class Play extends Phaser.Scene {
         this.p1Score = 0;
         this.p2Score = 0;
         let textConfig = {
-            fontFamily: 'Courier',
+            fontFamily: 'Cursive',
             fontSize: '28px',
             backgroundColor: '#B55088',
             color: '#FDE7FF',
@@ -87,14 +94,14 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         }
-        this.scoreText1 = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, textConfig);
-        this.scoreText2 = this.add.text(game.config.width - borderUISize*4 - borderPadding*2, borderUISize + borderPadding*2, this.p2Score, textConfig);
+        this.p1ScoreText = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, textConfig);
+        this.p2ScoreText = this.add.text(game.config.width - borderUISize*4 - borderPadding*2, borderUISize + borderPadding*2, this.p2Score, textConfig);
 
         this.gameOver = false;
         textConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.add.text(game.config.width/2, game.config.height/2, this.winner(), textConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press [R] to Restart or [ESC] for Menu', textConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 - 64, this.winner(), textConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, 'PRESS\n[R] to Restart\nOR\n[ESC] for Menu', textConfig).setOrigin(0.5);
             this.gameOver = true;
         }, null, this);
     }
@@ -159,11 +166,11 @@ class Play extends Phaser.Scene {
         });
         if (rocket === this.p1Rocket) {
             this.p1Score += ship.points;
-            this.scoreText1.text = this.p1Score;   
+            this.p1ScoreText.text = this.p1Score;   
         }
         if (rocket === this.p2Rocket) {
             this.p2Score += ship.points;
-            this.scoreText2.text = this.p2Score;
+            this.p2ScoreText.text = this.p2Score;
         }
         this.sound.play('sfx_explosion');
     }

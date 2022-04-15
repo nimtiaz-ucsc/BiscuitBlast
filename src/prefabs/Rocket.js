@@ -13,6 +13,9 @@ class Rocket extends Phaser.GameObjects.Sprite {
     }
 
     update() {
+        if ((!this.inputLeft.isDown && !this.inputRight.isDown) || (this.inputLeft.isDown && this.inputRight.isDown)) {
+            this.angle = 0;
+        }
         if (this.inputLeft.isDown && this.x >= borderUISize + this.width) {
             this.x -= this.moveSpeed;
             this.angle = -45;
@@ -21,12 +24,10 @@ class Rocket extends Phaser.GameObjects.Sprite {
             this.x += this.moveSpeed;
             this.angle = 45;
         }
-        if (!this.inputLeft.isDown && !this.inputRight.isDown) {
-            this.angle = 0;
-        }
 
         if (Phaser.Input.Keyboard.JustDown(this.inputFire) && !this.isFiring) {
             this.isFiring = true;
+            this.anims.play('munch');
             this.sfxRocket.play();
         }
         if (this.isFiring && this.y >= borderUISize * 3 + borderPadding) {
@@ -34,12 +35,16 @@ class Rocket extends Phaser.GameObjects.Sprite {
         }
         if (this.y <= borderUISize * 3 + borderPadding) {
             this.isFiring = false;
+            this.anims.restart();
+            this.anims.stop();
             this.y = game.config.height - borderUISize - borderPadding;
         }
     }
 
     reset() {
         this.isFiring = false;
+        this.anims.restart();
+        this.anims.stop();
         this.y = game.config.height - borderUISize - borderPadding;
     }
 }
