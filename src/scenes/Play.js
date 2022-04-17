@@ -88,7 +88,7 @@ class Play extends Phaser.Scene {
         this.p1Score = 0;
         this.p2Score = 0;
 
-        this.p1Config = {
+        let p1Config = {
             fontFamily: 'Cursive',
             fontSize: '28px',
             backgroundColor: '#B55088',
@@ -102,7 +102,7 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         }
-        this.p2Config = {
+        let p2Config = {
             fontFamily: 'Cursive',
             fontSize: '28px',
             backgroundColor: '#FDE7FF',
@@ -116,7 +116,7 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         }        
-        this.gameOverConfig = {
+        let gameOverConfig = {
             fontFamily: 'Cursive',
             fontSize: '28px',
             color: '#FFCDDB',
@@ -130,13 +130,10 @@ class Play extends Phaser.Scene {
             fixedWidth: 0
         }
 
-        this.p1ScoreText = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, this.p1Config);
-        this.p2ScoreText = this.add.text(game.config.width - borderUISize*4 - borderPadding*2, borderUISize + borderPadding*2, this.p2Score, this.p2Config);
-        this.centerText = this.add.text(game.config.width/2, borderUISize*2 + borderPadding, '', this.gameOverConfig).setOrigin(0.5);
+        this.p1ScoreText = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, p1Config);
+        this.p2ScoreText = this.add.text(game.config.width - borderUISize*4 - borderPadding*2, borderUISize + borderPadding*2, this.p2Score, p2Config);
+        this.centerText = this.add.text(game.config.width/2, borderUISize*2 + borderPadding, '', gameOverConfig).setOrigin(0.5);
         
-        this.p1Config.fixedWidth = game.config.width;
-        this.p2Config.fixedWidth = game.config.width;
-        this.winnerConfig = this.gameOverConfig;
         this.gameOver = false;
 
         this.clock = this.time.delayedCall(game.settings.gameTimer/2, () => {
@@ -151,7 +148,7 @@ class Play extends Phaser.Scene {
             this.sound.play('sfx_win');
             this.centerText.text = this.winner();
             this.add.rectangle(game.config.width/2, game.config.height/2 + 32, game.config.width, borderUISize*5.5, 0x68386C).setOrigin(0.5).setAlpha(0.75);  
-            this.add.text(game.config.width/2, game.config.height/2 + 32, 'PRESS\n[R] to Restart\nOR\n[ESC] for Menu', this.gameOverConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 32, 'PRESS\n[R] to Restart\nOR\n[ESC] for Menu', gameOverConfig).setOrigin(0.5);
 
             this.gameOver = true;
             this.p1Rocket.destroy();
@@ -229,10 +226,8 @@ class Play extends Phaser.Scene {
 
     winner() {
         if (this.p1Score > this.p2Score) {
-            this.winnerConfig = this.p1Config;
             return "Player 1 Wins!";
         } else if (this.p2Score > this.p1Score) {
-            this.winnerConfig = this.p2Config;
             return "Player 2 Wins!";
         } else {
             return "It's a Draw!"
