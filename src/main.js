@@ -1,8 +1,8 @@
 /***********************
 Name: Nile Imtiaz
 Project name: Biscuit Beast's Biscuit Blast
-Start date: 4/12/2022
-End date: 4/../2022
+Start date: 4/11/2022
+End date: 4/17/2022
 ************************
 Points breakdown:
 - Redesign the game's artwork, UI, and sound to change its theme/aesthetic (to something other than sci-fi) (60)
