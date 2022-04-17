@@ -47,7 +47,6 @@ class Menu extends Phaser.Scene {
         
         this.add.text(2.05 * game.config.width/3, game.config.height/2, 'P1 CONTROLS:\nMove: [A] [D]\nLaunch: [W]', menuConfig).setOrigin(0);
         this.add.text(2.05 * game.config.width/3, 3 * game.config.height/4, 'P2 CONTROLS:\nMove: [J] [L]\nLaunch: [I]', menuConfig).setOrigin(0);
-        //menuConfig.backgroundColor = '#68386C';
         menuConfig.align = 'center';
         menuConfig.fontSize = '24px';
         this.add.rectangle(game.config.width/4, 2.85 * game.config.height/4 + borderUISize + borderPadding, game.config.width/3, borderUISize*4.5, 0x68386C).setOrigin(0.5).setAlpha(0.75);
