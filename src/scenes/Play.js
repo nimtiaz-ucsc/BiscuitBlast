@@ -64,16 +64,16 @@ class Play extends Phaser.Scene {
             repeat: -1
         });
 
-        this.sky = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sky').setOrigin(0, 0);
-        this.clouds = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'clouds').setOrigin(0, 0);
+        this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sky').setOrigin(0);
+        this.clouds = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'clouds').setOrigin(0);
         this.cloudSprite = this.add.sprite(game.config.width, game.config.height, 'clouds').setVisible(false).play('float');
 
         this.p1Rocket = new Rocket(this, game.config.width/3, 431, 'monster1', 'munch1', keyA, keyD, keyW).setOrigin(0.5, 0);
         this.p2Rocket = new Rocket(this, 2 * game.config.width/3, 431, 'monster2', 'munch2', keyJ, keyL, keyI).setOrigin(0.5, 0);
 
-        this.shipA = new Ship(this, game.config.width + borderUISize*6, borderUISize*4, 'cookie', 0, 30).setOrigin(0, 0);
-        this.shipB = new Ship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'cookie', 0, 20).setOrigin(0,0);
-        this.shipC = new Ship(this, game.config.width, borderUISize*6 + borderPadding*4, 'cookie', 0, 10).setOrigin(0,0);
+        this.shipA = new Ship(this, game.config.width + borderUISize*6, borderUISize*4, 'cookie', 0, 30).setOrigin(0);
+        this.shipB = new Ship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'cookie', 0, 20).setOrigin(0);
+        this.shipC = new Ship(this, game.config.width, borderUISize*6 + borderPadding*4, 'cookie', 0, 10).setOrigin(0);
 
         this.shipA.anims.play('crumbs');
         crumbsAnim.frameRate = 4;
@@ -81,7 +81,8 @@ class Play extends Phaser.Scene {
         crumbsAnim.frameRate = 6;
         this.shipC.anims.play('crumbs');
 
-        this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize*2, 0x68386C).setOrigin(0, 0);   
+        //this.add.rectangle(0, borderUISize*2 + borderPadding, game.config.width, borderUISize*2, 0x68386C).setOrigin(0, 0.5);
+        this.add.rectangle(0, borderUISize*2 + borderPadding, game.config.width, borderUISize*2.5, 0x68386C).setOrigin(0, 0.5).setAlpha(0.75); 
 
         this.p1Score = 0;
         this.p2Score = 0;
@@ -117,12 +118,11 @@ class Play extends Phaser.Scene {
         this.gameOverConfig = {
             fontFamily: 'Cursive',
             fontSize: '28px',
-            backgroundColor: '#68386C',
-            color: '#FDE7FF',
+            color: '#FFCDDB',
             align: 'center',
             padding: {
-                top: 10,
-                bottom: 10,
+                top: 5,
+                bottom: 5,
                 left: game.config.width,
                 right: game.config.width
             },
@@ -131,15 +131,25 @@ class Play extends Phaser.Scene {
 
         this.p1ScoreText = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, this.p1Config);
         this.p2ScoreText = this.add.text(game.config.width - borderUISize*4 - borderPadding*2, borderUISize + borderPadding*2, this.p2Score, this.p2Config);
+        this.centerText = this.add.text(game.config.width/2, borderUISize*2 + borderPadding, '', this.gameOverConfig).setOrigin(0.5);
         
         this.p1Config.fixedWidth = game.config.width;
         this.p2Config.fixedWidth = game.config.width;
         this.winnerConfig = this.gameOverConfig;
         this.gameOver = false;
+
+        this.clock = this.time.delayedCall(game.settings.gameTimer/2, () => {
+            this.shipA.moveSpeed *= 1.5;
+            this.shipB.moveSpeed *= 1.5;
+            this.shipC.moveSpeed *= 1.5;
+            this.centerText.text = 'Speed Up!';
+        }, null, this);
+
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.add.text(game.config.width/2, game.config.height/2 + 64, 'PRESS\n[R] to Restart\nOR\n[ESC] for Menu', this.gameOverConfig).setOrigin(0.5);
-            this.add.rectangle(game.config.width/2, game.config.height/2 - 64, game.config.width, borderUISize*2, 0x68386C).setOrigin(0.5);  
-            this.add.text(game.config.width/2, game.config.height/2 - 64, this.winner(), this.winnerConfig).setOrigin(0.5);
+            this.centerText.text = this.winner();
+            this.add.rectangle(game.config.width/2, game.config.height/2 + 32, game.config.width, borderUISize*5.5, 0x68386C).setOrigin(0.5).setAlpha(0.75);  
+            this.add.text(game.config.width/2, game.config.height/2 + 32, 'PRESS\n[R] to Restart\nOR\n[ESC] for Menu', this.gameOverConfig).setOrigin(0.5);
+
             this.gameOver = true;
             this.p1Rocket.destroy();
             this.p2Rocket.destroy();
@@ -161,9 +171,8 @@ class Play extends Phaser.Scene {
         }
         this.clouds.setFrame(this.cloudSprite.frame.name);
         this.clouds.tilePositionX -= 1;
-        
+
         if (!this.gameOver) {
-            //this.clouds.tilePositionX -= 1;
             this.p1Rocket.update();
             this.p2Rocket.update();
             this.shipA.update();
@@ -191,15 +200,12 @@ class Play extends Phaser.Scene {
     }
 
     checkCollision(rocket, ship) {
-        if (rocket.x < ship.x + ship.width && rocket.x + rocket.width > ship.x && rocket.y < ship.y + ship.height && rocket.y + rocket.height > ship.y) {
-            return true;
-        }
-        return false;
+        return rocket.x < ship.x + ship.width && rocket.x + rocket.width > ship.x && rocket.y < ship.y + ship.height && rocket.y + rocket.height > ship.y;
     }
 
     shipExplode(rocket, ship) {
         ship.alpha = 0;
-        let boom = this.add.sprite(ship.x, ship.y, 'crumbling').setOrigin(0, 0);
+        let boom = this.add.sprite(ship.x, ship.y, 'crumbling').setOrigin(0);
         ship.reset();
         boom.anims.play('crumble');
         boom.on('animationcomplete', () => {

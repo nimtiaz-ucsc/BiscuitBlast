@@ -15,8 +15,8 @@ class Menu extends Phaser.Scene {
         let menuConfig = {
             fontFamily: 'Cursive',
             fontSize: '20px',
-            color: '#FDE7FF',
-            align: 'left',
+            color: '#FFCDDB',
+            align: 'center',
             padding: {
                 top: 10,
                 bottom: 10,
@@ -40,16 +40,18 @@ class Menu extends Phaser.Scene {
             repeat: -1
         });
 
-        this.add.sprite(0, 0, 'sky').setOrigin(0, 0);
-        this.add.sprite(0, 0, 'clouds').setOrigin(0, 0).play('float');
+        this.add.tileSprite(0, 0, game.config.width, game.config.height, 'sky').setOrigin(0);
+        this.clouds = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'clouds').setOrigin(0);
+        this.cloudSprite = this.add.sprite(game.config.width, game.config.height, 'clouds').setVisible(false).play('float');
         this.add.sprite(0, 0, 'title').setOrigin(0, 0).play('title');
         
         this.add.text(2.05 * game.config.width/3, game.config.height/2, 'P1 CONTROLS:\nMove: [A] [D]\nLaunch: [W]', menuConfig).setOrigin(0);
         this.add.text(2.05 * game.config.width/3, 3 * game.config.height/4, 'P2 CONTROLS:\nMove: [J] [L]\nLaunch: [I]', menuConfig).setOrigin(0);
-        menuConfig.backgroundColor = '#68386C';
+        //menuConfig.backgroundColor = '#68386C';
         menuConfig.align = 'center';
         menuConfig.fontSize = '24px';
-        this.add.text(game.config.width/9, 1.75 * game.config.height/3 + borderUISize + borderPadding, 'PRESS\n[<-] for Novice\nOR\n[->] for Expert', menuConfig).setOrigin(0);
+        this.add.rectangle(game.config.width/4, 2.85 * game.config.height/4 + borderUISize + borderPadding, game.config.width/3, borderUISize*4.5, 0x68386C).setOrigin(0.5).setAlpha(0.75);
+        this.add.text(game.config.width/4, 2.85 * game.config.height/4 + borderUISize + borderPadding, 'PRESS\n[<-] for Novice\nOR\n[->] for Expert', menuConfig).setOrigin(0.5);
 
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
@@ -57,10 +59,13 @@ class Menu extends Phaser.Scene {
     }
 
     update() {
+        this.clouds.setFrame(this.cloudSprite.frame.name);
+        this.clouds.tilePositionX -= 1;
+
         if (Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             game.settings = {
                 spaceshipSpeed: 3,
-                gameTimer: 5000
+                gameTimer: 10000
             }
             this.sound.play('sfx_select');
             this.scene.start('play');
