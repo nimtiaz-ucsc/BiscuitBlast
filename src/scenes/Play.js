@@ -6,8 +6,9 @@ class Play extends Phaser.Scene {
     preload() {
         this.load.image('sky', 'assets/sky.png'); 
         
-        this.load.spritesheet('monster', 'assets/monster.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 3});
-        this.load.spritesheet('explosion', 'assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+        this.load.spritesheet('monster1', 'assets/monster1.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 3});
+        this.load.spritesheet('monster2', 'assets/monster2.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 3});
+        this.load.spritesheet('crumbling', 'assets/crumble.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 7});
         this.load.spritesheet('cookie', 'assets/cookie.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 1});
         this.load.spritesheet('clouds', 'assets/clouds.png', {frameWidth: 640, frameHeight: 480, startFrame: 0, endFrame: 1});
 
@@ -30,9 +31,9 @@ class Play extends Phaser.Scene {
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         
         this.anims.create({
-            key: 'explode',
-            frames: this.anims.generateFrameNumbers('explosion', {start: 0, end: 9, first: 0}),
-            frameRate: 30
+            key: 'crumble',
+            frames: this.anims.generateFrameNumbers('crumbling', {start: 0, end: 7, first: 0}),
+            frameRate: 20
         });
         
         let crumbsAnim = this.anims.create({
@@ -50,8 +51,15 @@ class Play extends Phaser.Scene {
         });
 
         this.anims.create({
-            key: 'munch',
-            frames: this.anims.generateFrameNumbers('monster', {start: 0, end: 3, first: 0}),
+            key: 'munch1',
+            frames: this.anims.generateFrameNumbers('monster1', {start: 0, end: 3, first: 0}),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'munch2',
+            frames: this.anims.generateFrameNumbers('monster2', {start: 0, end: 3, first: 0}),
             frameRate: 10,
             repeat: -1
         });
@@ -60,8 +68,8 @@ class Play extends Phaser.Scene {
         this.clouds = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'clouds').setOrigin(0, 0);
         this.cloudSprite = this.add.sprite(game.config.width, game.config.height, 'clouds').setVisible(false).play('float');
 
-        this.p1Rocket = new Rocket(this, game.config.width/3, 431, 'monster', 'munch', keyA, keyD, keyW).setOrigin(0.5, 0);
-        this.p2Rocket = new Rocket(this, 2 * game.config.width/3, 431, 'monster', 'munch', keyJ, keyL, keyI).setOrigin(0.5, 0);
+        this.p1Rocket = new Rocket(this, game.config.width/3, 431, 'monster1', 'munch1', keyA, keyD, keyW).setOrigin(0.5, 0);
+        this.p2Rocket = new Rocket(this, 2 * game.config.width/3, 431, 'monster2', 'munch2', keyJ, keyL, keyI).setOrigin(0.5, 0);
 
         this.shipA = new Ship(this, game.config.width + borderUISize*6, borderUISize*4, 'cookie', 0, 30).setOrigin(0, 0);
         this.shipB = new Ship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'cookie', 0, 20).setOrigin(0,0);
@@ -73,16 +81,12 @@ class Play extends Phaser.Scene {
         crumbsAnim.frameRate = 6;
         this.shipC.anims.play('crumbs');
 
-        this.add.rectangle(10, borderUISize + borderPadding, game.config.width - 20, borderUISize*2, 0x68386C).setOrigin(0, 0);
-
-        //this.add.rectangle(0, 0, game.config.width, borderUISize, 0xB2B1B2).setOrigin(0, 0);
-        //this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xB2B1B2).setOrigin(0, 0);
-        //this.add.rectangle(0, 0, borderUISize, game.config.height, 0xB2B1B2).setOrigin(0, 0);
-        //this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xB2B1B2).setOrigin(0, 0);    
+        this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize*2, 0x68386C).setOrigin(0, 0);   
 
         this.p1Score = 0;
         this.p2Score = 0;
-        let textConfig = {
+
+        this.p1Config = {
             fontFamily: 'Cursive',
             fontSize: '28px',
             backgroundColor: '#B55088',
@@ -96,15 +100,52 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         }
-        this.p1ScoreText = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, textConfig);
-        this.p2ScoreText = this.add.text(game.config.width - borderUISize*4 - borderPadding*2, borderUISize + borderPadding*2, this.p2Score, textConfig);
+        this.p2Config = {
+            fontFamily: 'Cursive',
+            fontSize: '28px',
+            backgroundColor: '#FDE7FF',
+            color: '#BC91C0',
+            align: 'center',
+            padding: {
+                top: 5,
+                bottom: 5,
+                left: 5,
+                right: 5
+            },
+            fixedWidth: 100
+        }        
+        this.gameOverConfig = {
+            fontFamily: 'Cursive',
+            fontSize: '28px',
+            backgroundColor: '#68386C',
+            color: '#FDE7FF',
+            align: 'center',
+            padding: {
+                top: 10,
+                bottom: 10,
+                left: game.config.width,
+                right: game.config.width
+            },
+            fixedWidth: 0
+        }
 
+        this.p1ScoreText = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, this.p1Config);
+        this.p2ScoreText = this.add.text(game.config.width - borderUISize*4 - borderPadding*2, borderUISize + borderPadding*2, this.p2Score, this.p2Config);
+        
+        this.p1Config.fixedWidth = game.config.width;
+        this.p2Config.fixedWidth = game.config.width;
+        this.winnerConfig = this.gameOverConfig;
         this.gameOver = false;
-        textConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.add.text(game.config.width/2, game.config.height/2 - 64, this.winner(), textConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + 64, 'PRESS\n[R] to Restart\nOR\n[ESC] for Menu', textConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, 'PRESS\n[R] to Restart\nOR\n[ESC] for Menu', this.gameOverConfig).setOrigin(0.5);
+            this.add.rectangle(game.config.width/2, game.config.height/2 - 64, game.config.width, borderUISize*2, 0x68386C).setOrigin(0.5);  
+            this.add.text(game.config.width/2, game.config.height/2 - 64, this.winner(), this.winnerConfig).setOrigin(0.5);
             this.gameOver = true;
+            this.p1Rocket.destroy();
+            this.p2Rocket.destroy();
+            this.shipA.destroy();
+            this.shipB.destroy();
+            this.shipC.destroy();
         }, null, this);
     }
 
@@ -118,11 +159,11 @@ class Play extends Phaser.Scene {
             this.sound.play('sfx_select');
             this.scene.start('menu');
         }
-
         this.clouds.setFrame(this.cloudSprite.frame.name);
         this.clouds.tilePositionX -= 1;
-
+        
         if (!this.gameOver) {
+            //this.clouds.tilePositionX -= 1;
             this.p1Rocket.update();
             this.p2Rocket.update();
             this.shipA.update();
@@ -158,9 +199,9 @@ class Play extends Phaser.Scene {
 
     shipExplode(rocket, ship) {
         ship.alpha = 0;
-        let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
+        let boom = this.add.sprite(ship.x, ship.y, 'crumbling').setOrigin(0, 0);
         ship.reset();
-        boom.anims.play('explode');
+        boom.anims.play('crumble');
         boom.on('animationcomplete', () => {
             ship.reset();
             ship.alpha = 1;
@@ -179,8 +220,10 @@ class Play extends Phaser.Scene {
 
     winner() {
         if (this.p1Score > this.p2Score) {
+            this.winnerConfig = this.p1Config;
             return "Player 1 Wins!";
         } else if (this.p2Score > this.p1Score) {
+            this.winnerConfig = this.p2Config;
             return "Player 2 Wins!";
         } else {
             return "It's a Draw!"
