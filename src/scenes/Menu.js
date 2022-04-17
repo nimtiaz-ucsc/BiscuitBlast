@@ -9,14 +9,14 @@ class Menu extends Phaser.Scene {
         this.load.spritesheet('title', 'assets/title.png', {frameWidth: 640, frameHeight: 480, startFrame: 0, endFrame: 1});
         this.load.spritesheet('clouds', 'assets/clouds.png', {frameWidth: 640, frameHeight: 480, startFrame: 0, endFrame: 1});
 
-        this.load.audio('sfx_select', 'assets/select.wav');
+        this.load.audio('sfx_menu', 'assets/menu.wav');
     }
     create() {
         let menuConfig = {
             fontFamily: 'Cursive',
             fontSize: '20px',
             color: '#FFCDDB',
-            align: 'center',
+            align: 'left',
             padding: {
                 top: 10,
                 bottom: 10,
@@ -54,7 +54,6 @@ class Menu extends Phaser.Scene {
 
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-    
     }
 
     update() {
@@ -64,9 +63,9 @@ class Menu extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             game.settings = {
                 spaceshipSpeed: 3,
-                gameTimer: 10000
+                gameTimer: 60000
             }
-            this.sound.play('sfx_select');
+            this.sound.play('sfx_menu');
             this.scene.start('play');
         }
         if (Phaser.Input.Keyboard.JustDown(keyRIGHT)) {
@@ -74,7 +73,7 @@ class Menu extends Phaser.Scene {
                 spaceshipSpeed: 4,
                 gameTimer: 45000
             }
-            this.sound.play('sfx_select');
+            this.sound.play('sfx_menu');
             this.scene.start('play');
         }
     }

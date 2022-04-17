@@ -12,9 +12,11 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('cookie', 'assets/cookie.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 1});
         this.load.spritesheet('clouds', 'assets/clouds.png', {frameWidth: 640, frameHeight: 480, startFrame: 0, endFrame: 1});
 
-        this.load.audio('sfx_select', 'assets/select.wav');
-        this.load.audio('sfx_explosion', 'assets/explosion.wav');
-        this.load.audio('sfx_rocket', 'assets/rocket.wav');
+        this.load.audio('sfx_menu', 'assets/menu.wav');     // royalty free sfx from mixkit.co
+        this.load.audio('sfx_swish', 'assets/swish.wav');
+        this.load.audio('sfx_chew', 'assets/chew.wav')
+        this.load.audio('sfx_woosh', 'assets/woosh.wav');
+        this.load.audio('sfx_win', 'assets/win.wav');
     }
 
 
@@ -68,8 +70,8 @@ class Play extends Phaser.Scene {
         this.clouds = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'clouds').setOrigin(0);
         this.cloudSprite = this.add.sprite(game.config.width, game.config.height, 'clouds').setVisible(false).play('float');
 
-        this.p1Rocket = new Rocket(this, game.config.width/3, 431, 'monster1', 'munch1', keyA, keyD, keyW).setOrigin(0.5, 0);
-        this.p2Rocket = new Rocket(this, 2 * game.config.width/3, 431, 'monster2', 'munch2', keyJ, keyL, keyI).setOrigin(0.5, 0);
+        this.p1Rocket = new Rocket(this, game.config.width/3, game.config.height - borderUISize * 2 - borderPadding, 'monster1', 'munch1', keyA, keyD, keyW).setOrigin(0.5, 0);
+        this.p2Rocket = new Rocket(this, 2 * game.config.width/3, game.config.height - borderUISize * 2 - borderPadding, 'monster2', 'munch2', keyJ, keyL, keyI).setOrigin(0.5, 0);
 
         this.shipA = new Ship(this, game.config.width + borderUISize*6, borderUISize*4, 'cookie', 0, 30).setOrigin(0);
         this.shipB = new Ship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'cookie', 0, 20).setOrigin(0);
@@ -81,7 +83,6 @@ class Play extends Phaser.Scene {
         crumbsAnim.frameRate = 6;
         this.shipC.anims.play('crumbs');
 
-        //this.add.rectangle(0, borderUISize*2 + borderPadding, game.config.width, borderUISize*2, 0x68386C).setOrigin(0, 0.5);
         this.add.rectangle(0, borderUISize*2 + borderPadding, game.config.width, borderUISize*2.5, 0x68386C).setOrigin(0, 0.5).setAlpha(0.75); 
 
         this.p1Score = 0;
@@ -139,6 +140,7 @@ class Play extends Phaser.Scene {
         this.gameOver = false;
 
         this.clock = this.time.delayedCall(game.settings.gameTimer/2, () => {
+            this.sound.play('sfx_woosh');
             this.shipA.moveSpeed *= 1.5;
             this.shipB.moveSpeed *= 1.5;
             this.shipC.moveSpeed *= 1.5;
@@ -146,6 +148,7 @@ class Play extends Phaser.Scene {
         }, null, this);
 
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
+            this.sound.play('sfx_win');
             this.centerText.text = this.winner();
             this.add.rectangle(game.config.width/2, game.config.height/2 + 32, game.config.width, borderUISize*5.5, 0x68386C).setOrigin(0.5).setAlpha(0.75);  
             this.add.text(game.config.width/2, game.config.height/2 + 32, 'PRESS\n[R] to Restart\nOR\n[ESC] for Menu', this.gameOverConfig).setOrigin(0.5);
@@ -161,12 +164,12 @@ class Play extends Phaser.Scene {
 
     update() {
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
-            this.sound.play('sfx_select');
+            this.sound.play('sfx_menu');
             this.scene.restart();
         }
 
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyESC)) {
-            this.sound.play('sfx_select');
+            this.sound.play('sfx_menu');
             this.scene.start('menu');
         }
         this.clouds.setFrame(this.cloudSprite.frame.name);
@@ -221,7 +224,7 @@ class Play extends Phaser.Scene {
             this.p2Score += ship.points;
             this.p2ScoreText.text = this.p2Score;
         }
-        this.sound.play('sfx_explosion');
+        this.sound.play('sfx_chew');
     }
 
     winner() {
