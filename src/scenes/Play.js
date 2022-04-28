@@ -73,9 +73,9 @@ class Play extends Phaser.Scene {
         this.p1Rocket = new Rocket(this, game.config.width/3, game.config.height - borderUISize * 2 - borderPadding, 'monster1', 'munch1', keyA, keyD, keyW).setOrigin(0.5, 0);
         this.p2Rocket = new Rocket(this, 2 * game.config.width/3, game.config.height - borderUISize * 2 - borderPadding, 'monster2', 'munch2', keyJ, keyL, keyI).setOrigin(0.5, 0);
 
-        this.shipA = new Ship(this, game.config.width + borderUISize*6, borderUISize*4, 'cookie', 0, 30).setOrigin(0);
-        this.shipB = new Ship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'cookie', 0, 20).setOrigin(0);
-        this.shipC = new Ship(this, game.config.width, borderUISize*6 + borderPadding*4, 'cookie', 0, 10).setOrigin(0);
+        this.shipA = new Ship(this, game.config.width + borderUISize*6, borderUISize*4, 'cookie', 0, 80).setOrigin(0);
+        this.shipB = new Ship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'cookie', 0, 50).setOrigin(0);
+        this.shipC = new Ship(this, game.config.width, borderUISize*6 + borderPadding*4, 'cookie', 0, 30).setOrigin(0);
 
         this.shipA.anims.play('crumbs');
         crumbsAnim.frameRate = 4;
